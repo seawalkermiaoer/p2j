@@ -3,6 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 
+# 引入并初始化项目内自定义字体（优先使用 font/SimHei.ttf）
+from utils.fonts import setup_custom_font
+setup_custom_font("font/SimHei.ttf")
+
 st.set_page_config(page_title="燕尾模型", page_icon="🕊️")
 
 st.title("燕尾模型：左右燕尾面积比 = 对应底边比")

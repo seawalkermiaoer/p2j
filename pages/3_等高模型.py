@@ -7,26 +7,7 @@ import base64
 import matplotlib
 from utils.fonts import setup_custom_font
 
-# 设置matplotlib支持中文显示
-try:
-    from matplotlib.font_manager import FontProperties
-    font_names = ['SimHei', 'Microsoft YaHei', 'SimSun', 'Arial Unicode MS', 'STSong']
-    font = None
-    for font_name in font_names:
-        try:
-            path = matplotlib.font_manager.findfont(FontProperties(family=font_name), fallback_to_default=False)
-            font = FontProperties(fname=path)
-            break
-        except Exception:
-            continue
-    if font is not None:
-        matplotlib.rcParams['font.sans-serif'] = [font.get_name()]
-    else:
-        matplotlib.rcParams['font.sans-serif'] = ['sans-serif']
-    matplotlib.rcParams['axes.unicode_minus'] = False
-except Exception as e:
-    st.warning(f"无法设置中文字体: {e}")
-    # 使用默认字体
+# 字体设置已统一至 utils.fonts.setup_custom_font
 
 # 使用项目内自定义字体进行初始化（优先使用 font/SimHei.ttf）
 setup_custom_font("font/SimHei.ttf")
@@ -92,13 +73,7 @@ def plot_triangle_area_formula():
     ax.set_aspect('equal')
     
     # 设置标题
-    try:
-        from matplotlib.font_manager import FontProperties
-        font_prop = FontProperties(family='sans-serif')
-        ax.set_title("三角形面积公式示意图", fontsize=14, pad=10, fontproperties=font_prop)
-    except:
-        ax.set_title("三角形面积公式示意图", fontsize=14, pad=10)
-    
+    ax.set_title("三角形面积公式示意图", fontsize=14, pad=10)
     ax.grid(True, linestyle='--', alpha=0.3)
     ax.legend()
     
@@ -221,14 +196,8 @@ with col2:
         ax.set_aspect('equal')
         
         # 设置标题
-        try:
-            from matplotlib.font_manager import FontProperties
-            font_prop = FontProperties(family='sans-serif')
-            ax.set_title(f"等高三角形面积比较：$S_1 : S_2 = {base1} : {base2} = {area1} : {area2}$", 
-                        fontsize=14, pad=10, fontproperties=font_prop)
-        except:
-            ax.set_title(f"等高三角形面积比较：$S_1 : S_2 = {base1} : {base2} = {area1} : {area2}$", 
-                        fontsize=14, pad=10)
+        ax.set_title(f"等高三角形面积比较：$S_1 : S_2 = {base1} : {base2} = {area1} : {area2}$", 
+                    fontsize=14, pad=10)
         
         ax.grid(True, linestyle='--', alpha=0.3)
         
@@ -357,15 +326,8 @@ with col4:
         ax.set_aspect('equal')
         
         # 设置标题
-        try:
-            from matplotlib.font_manager import FontProperties
-            font_prop = FontProperties(family='sans-serif')
-            ax.set_title("动点原理演示：动点在平行线上移动时三角形面积不变", 
-                        fontsize=14, pad=10, fontproperties=font_prop)
-        except:
-            ax.set_title("动点原理演示：动点在平行线上移动时三角形面积不变", 
-                        fontsize=14, pad=10)
-        
+        ax.set_title("动点原理演示：动点在平行线上移动时三角形面积不变", 
+                    fontsize=14, pad=10)
         ax.grid(True, linestyle='--', alpha=0.3)
         ax.legend(loc='upper right')
         
@@ -464,13 +426,8 @@ def plot_application_example():
     ax.set_ylim(-2, 6)
     ax.set_aspect('equal')
     
-    # 设置标题
-    try:
-        from matplotlib.font_manager import FontProperties
-        font_prop = FontProperties(family='sans-serif')
-        ax.set_title("等高模型应用示例：求三角形面积比", fontsize=14, pad=10, fontproperties=font_prop)
-    except:
-        ax.set_title("等高模型应用示例：求三角形面积比", fontsize=14, pad=10)
+    # 设置标题（统一使用全局字体设置）
+    ax.set_title("等高模型应用示例：求三角形面积比", fontsize=14, pad=10)
     
     ax.grid(True, linestyle='--', alpha=0.3)
     ax.legend()
