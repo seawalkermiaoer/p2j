@@ -174,13 +174,8 @@ def plot_pythagorean_proof(a, b):
     # 添加面积标签
     ax1.text((a+b/2)/2, (a+b+b/2)/2, f'$c^2$', ha='center', va='center', fontsize=14, color='green', weight='bold')
     
-    # 尝试使用系统可用的字体设置标题
-    try:
-        from matplotlib.font_manager import FontProperties
-        font_prop = FontProperties(family='sans-serif')
-        ax1.set_title("勾股定理证明：四个三角形 + 中间正方形", fontsize=14, pad=10, fontproperties=font_prop)
-    except:
-        ax1.set_title("勾股定理证明：四个三角形 + 中间正方形", fontsize=14, pad=10)
+    # 设置标题（统一使用全局字体设置）
+    ax1.set_title("勾股定理证明：四个三角形 + 中间正方形", fontsize=14, pad=10)
     
     ax1.set_aspect('equal')
     ax1.grid(True, linestyle='--', alpha=0.3)
@@ -216,13 +211,8 @@ def plot_pythagorean_proof(a, b):
     ax2.text(-0.3, a/2, f'a = {a}', va='center', rotation=90, fontsize=12, weight='bold')
     ax2.text(-0.3, a+b/2, f'b = {b}', va='center', rotation=90, fontsize=12, weight='bold')
     
-    # 尝试使用系统可用的字体设置标题
-    try:
-        from matplotlib.font_manager import FontProperties
-        font_prop = FontProperties(family='sans-serif')
-        ax2.set_title(f"面积重新排列：$(a+b)^2 = a^2 + 2ab + b^2 = {(a+b)**2}$", fontsize=14, pad=10, fontproperties=font_prop)
-    except:
-        ax2.set_title(f"面积重新排列：$(a+b)^2 = a^2 + 2ab + b^2 = {(a+b)**2}$", fontsize=14, pad=10)
+    # 设置标题（统一使用全局字体设置）
+    ax2.set_title(f"面积重新排列：$(a+b)^2 = a^2 + 2ab + b^2 = {(a+b)**2}$", fontsize=14, pad=10)
     
     ax2.set_aspect('equal')
     ax2.grid(True, linestyle='--', alpha=0.3)
@@ -301,15 +291,8 @@ def plot_ladder_example():
     ax.set_xlim(-0.5, 5)
     ax.set_ylim(-0.5, 5)
     
-    # 尝试使用系统可用的字体设置标题
-    try:
-        from matplotlib.font_manager import FontProperties
-        # 尝试获取中文字体
-        font_prop = FontProperties(family='sans-serif')
-        ax.set_title("梯子靠墙问题", fontsize=14, pad=10, fontproperties=font_prop)
-    except:
-        # 如果失败，使用默认设置
-        ax.set_title("梯子靠墙问题", fontsize=14, pad=10)
+    # 设置标题（统一使用全局字体设置）
+    ax.set_title("梯子靠墙问题", fontsize=14, pad=10)
     
     ax.set_aspect('equal')
     ax.grid(True, linestyle='--', alpha=0.7)
