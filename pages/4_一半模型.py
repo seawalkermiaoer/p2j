@@ -5,30 +5,10 @@ from matplotlib.patches import Polygon, Rectangle
 import io
 import base64
 import matplotlib
+from utils.fonts import setup_custom_font
 
-# 设置matplotlib支持中文显示（仅在系统存在中文字体时才启用，避免findfont警告）
-try:
-    from matplotlib.font_manager import FontProperties
-    font_names = ['SimHei', 'Microsoft YaHei', 'SimSun', 'Arial Unicode MS', 'STSong']
-    font = None
-    # 逐个尝试常见中文字体；仅当findfont确认存在实际字体文件时才使用
-    for font_name in font_names:
-        try:
-            path = matplotlib.font_manager.findfont(FontProperties(family=font_name), fallback_to_default=False)
-            font = FontProperties(fname=path)
-            break
-        except Exception:
-            continue
-    if font is not None:
-        matplotlib.rcParams['font.sans-serif'] = [font.get_name()]
-    else:
-        # 如果系统未安装常见中文字体，回退到默认无衬线字体，避免SimHei缺失警告
-        matplotlib.rcParams['font.sans-serif'] = ['sans-serif']
-    # 正常显示负号
-    matplotlib.rcParams['axes.unicode_minus'] = False
-except Exception as e:
-    st.warning(f"无法设置中文字体: {e}")
-    # 使用默认字体
+# 使用项目内自定义字体进行初始化（优先使用 font/SimHei.ttf）
+setup_custom_font("font/SimHei.ttf")
 
 st.set_page_config(page_title="一半模型", page_icon="📐")
 
@@ -142,6 +122,9 @@ def plot_basic_concept():
     ax2.set_xlim(-1, base + 1)
     ax2.set_ylim(-1, height + 1.5)
     ax2.set_aspect('equal')
+    ax2.set_title("性质2：三角形面积 = 平行四边形面积 ÷ 2", fontsize=14, pad=10)
+    ax2.grid(True, linestyle='--', alpha=0.3)
+    ax2.legend()
     ax2.set_title("性质2：三角形面积 = 平行四边形面积 ÷ 2", fontsize=14, pad=10)
     ax2.grid(True, linestyle='--', alpha=0.3)
     
