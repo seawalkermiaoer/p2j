@@ -5,32 +5,31 @@ from matplotlib.patches import Polygon
 import io
 import base64
 import matplotlib
+from utils.fonts import setup_custom_font
 
 # 设置matplotlib支持中文显示
 try:
-    # 尝试使用系统可用的中文字体
     from matplotlib.font_manager import FontProperties
-    # 尝试多种可能的中文字体
     font_names = ['SimHei', 'Microsoft YaHei', 'SimSun', 'Arial Unicode MS', 'STSong']
     font = None
-    
     for font_name in font_names:
         try:
-            font = FontProperties(fname=matplotlib.font_manager.findfont(font_name))
+            path = matplotlib.font_manager.findfont(FontProperties(family=font_name), fallback_to_default=False)
+            font = FontProperties(fname=path)
             break
-        except:
+        except Exception:
             continue
-    
     if font is not None:
         matplotlib.rcParams['font.sans-serif'] = [font.get_name()]
     else:
-        # 如果找不到中文字体，使用系统默认字体
         matplotlib.rcParams['font.sans-serif'] = ['sans-serif']
-        
-    matplotlib.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+    matplotlib.rcParams['axes.unicode_minus'] = False
 except Exception as e:
     st.warning(f"无法设置中文字体: {e}")
     # 使用默认字体
+
+# 使用项目内自定义字体进行初始化（优先使用 font/SimHei.ttf）
+setup_custom_font("font/SimHei.ttf")
 
 st.set_page_config(page_title="等高模型", page_icon="📏")
 

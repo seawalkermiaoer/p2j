@@ -5,32 +5,10 @@ from matplotlib.patches import Polygon
 import io
 import base64
 import matplotlib
+from utils.fonts import setup_custom_font
 
-# 设置matplotlib支持中文显示
-try:
-    # 尝试使用系统可用的中文字体
-    from matplotlib.font_manager import FontProperties
-    # 尝试多种可能的中文字体
-    font_names = ['SimHei', 'Microsoft YaHei', 'SimSun', 'Arial Unicode MS', 'STSong']
-    font = None
-    
-    for font_name in font_names:
-        try:
-            font = FontProperties(fname=matplotlib.font_manager.findfont(font_name))
-            break
-        except:
-            continue
-    
-    if font is not None:
-        matplotlib.rcParams['font.sans-serif'] = [font.get_name()]
-    else:
-        # 如果找不到中文字体，使用系统默认字体
-        matplotlib.rcParams['font.sans-serif'] = ['sans-serif']
-        
-    matplotlib.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
-except Exception as e:
-    st.warning(f"无法设置中文字体: {e}")
-    # 使用默认字体
+# 使用项目内自定义字体进行初始化（优先使用 font/SimHei.ttf）
+setup_custom_font("font/SimHei.ttf")
 
 st.set_page_config(page_title="勾股定理", page_icon="📐")
 
@@ -52,107 +30,80 @@ st.markdown("""
 
 # 创建绘制直角三角形的函数
 def plot_right_triangle(a, b, title, color='skyblue', figsize=(6, 6)):
+    """绘制直角三角形并返回图像的 base64 编码。
+
+    Args:
+        a: 第一条直角边长度。
+        b: 第二条直角边长度。
+        title: 图像标题。
+        color: 三角形填充颜色。
+        figsize: 图像大小。
+
+    Returns:
+        图像的 base64 编码字符串。
     """
-    绘制直角三角形并返回图像的base64编码
-    
-    参数:
-        a: 第一条直角边的长度
-        b: 第二条直角边的长度
-        title: 图像标题
-        color: 三角形填充颜色
-        figsize: 图像大小
-    
-    返回:
-        图像的base64编码字符串
-    """
-    # 计算斜边长度
     c = np.sqrt(a**2 + b**2)
-    
-    # 创建三角形顶点
     vertices = [(0, 0), (a, 0), (0, b)]
-    
+
     fig, ax = plt.subplots(figsize=figsize)
-    
-    # 创建三角形
+
     triangle = Polygon(vertices, fill=True, color=color, alpha=0.6)
     ax.add_patch(triangle)
-    
-    # 绘制三角形边
-    ax.plot([0, a], [0, 0], 'k-', linewidth=2)  # 底边
-    ax.plot([0, 0], [0, b], 'k-', linewidth=2)  # 高
-    ax.plot([a, 0], [0, b], 'k-', linewidth=2)  # 斜边
-    
-    # 添加直角符号
+
+    ax.plot([0, a], [0, 0], 'k-', linewidth=2)
+    ax.plot([0, 0], [0, b], 'k-', linewidth=2)
+    ax.plot([a, 0], [0, b], 'k-', linewidth=2)
+
     ax.plot([0, 0.2], [0, 0], 'k-', linewidth=2)
     ax.plot([0, 0], [0, 0.2], 'k-', linewidth=2)
-    
-    # 添加边长标签
+
     ax.text(a/2, -0.3, f'a = {a}', ha='center', fontsize=12)
     ax.text(-0.3, b/2, f'b = {b}', va='center', rotation=90, fontsize=12)
     ax.text(a/2-0.5, b/2+0.3, f'c = {c:.2f}', ha='center', fontsize=12)
-    
-    # 添加顶点标签
+
     ax.text(-0.2, -0.2, 'C', fontsize=12)
     ax.text(a+0.2, -0.2, 'A', fontsize=12)
     ax.text(-0.2, b+0.2, 'B', fontsize=12)
-    
-    # 设置坐标轴范围和标题
+
     ax.set_xlim(-1, a+1)
     ax.set_ylim(-1, b+1)
     ax.set_aspect('equal')
-    
-    # 尝试使用系统可用的字体设置标题
-    try:
-        from matplotlib.font_manager import FontProperties
-        # 尝试获取中文字体
-        font_prop = FontProperties(family='sans-serif')
-        ax.set_title(title, fontsize=14, pad=10, fontproperties=font_prop)
-    except:
-        # 如果失败，使用默认设置
-        ax.set_title(title, fontsize=14, pad=10)
-    
+    ax.set_title(title, fontsize=14, pad=10)
     ax.grid(True, linestyle='--', alpha=0.7)
-    
-    # 将图像转换为base64编码
+
     buf = io.BytesIO()
     plt.savefig(buf, format='png', bbox_inches='tight')
     plt.close(fig)
     buf.seek(0)
     img_str = base64.b64encode(buf.read()).decode('utf-8')
-    
     return img_str
 
 # 勾股定理可视化
 st.header("勾股定理可视化")
 
-# 创建两列布局
 col1, col2 = st.columns(2)
 
 with col1:
-    # 用户输入
     st.subheader("设置直角三角形的边长")
     a = st.slider("直角边a的长度", 1, 10, 3)
     b = st.slider("直角边b的长度", 1, 10, 4)
-    
-    # 计算斜边长度
     c = np.sqrt(a**2 + b**2)
-    
+
     st.markdown(f"""
     ### 计算结果
     - 直角边a = {a}
     - 直角边b = {b}
     - 斜边c = {c:.2f}
-    
+
     ### 验证勾股定理
     $a^2 + b^2 = {a}^2 + {b}^2 = {a**2} + {b**2} = {a**2 + b**2}$
-    
+
     $c^2 = {c:.2f}^2 = {c**2:.2f}$
-    
+
     因此，$a^2 + b^2 = c^2$ 成立。
     """)
 
 with col2:
-    # 显示直角三角形图像
     triangle_img = plot_right_triangle(a, b, f"直角三角形 (a={a}, b={b}, c={c:.2f})")
     st.image(f"data:image/png;base64,{triangle_img}", caption="勾股定理图示")
 
@@ -171,7 +122,7 @@ st.markdown("""
 7. 化简得到：$a^2 + b^2 = c^2$
 """)
 
-# 创建勾股定理证明图
+# 下面的图像绘制与原逻辑一致，仅移除局部字体设置，改为全局字体
 def plot_pythagorean_proof(a, b):
     """
     绘制勾股定理证明图并返回图像的base64编码

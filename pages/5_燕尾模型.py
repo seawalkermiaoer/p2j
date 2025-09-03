@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 
-st.set_page_config(page_title="燕尾模型（修正版）", page_icon="🕊️")
+st.set_page_config(page_title="燕尾模型", page_icon="🕊️")
 
 st.title("燕尾模型：左右燕尾面积比 = 对应底边比")
 

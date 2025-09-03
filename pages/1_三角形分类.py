@@ -5,32 +5,11 @@ from matplotlib.patches import Polygon
 import io
 import base64
 import matplotlib
+from utils.fonts import setup_custom_font
 
-# 设置matplotlib支持中文显示
-try:
-    # 尝试使用系统可用的中文字体
-    from matplotlib.font_manager import FontProperties
-    # 尝试多种可能的中文字体
-    font_names = ['SimHei', 'Microsoft YaHei', 'SimSun', 'Arial Unicode MS', 'STSong']
-    font = None
-    
-    for font_name in font_names:
-        try:
-            font = FontProperties(fname=matplotlib.font_manager.findfont(font_name))
-            break
-        except:
-            continue
-    
-    if font is not None:
-        matplotlib.rcParams['font.sans-serif'] = [font.get_name()]
-    else:
-        # 如果找不到中文字体，使用系统默认字体
-        matplotlib.rcParams['font.sans-serif'] = ['sans-serif']
-        
-    matplotlib.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
-except Exception as e:
-    st.warning(f"无法设置中文字体: {e}")
-    # 使用默认字体
+# 使用项目内自定义字体进行初始化（优先使用 font/SimHei.ttf）
+# 若文件缺失，则回退到常见中文字体或系统无衬线字体，确保不报错
+setup_custom_font("font/SimHei.ttf")
 
 st.set_page_config(page_title="三角形分类", page_icon="📐")
 
@@ -41,58 +20,45 @@ st.markdown("""
 """)
 
 # 创建绘制三角形的函数
+
 def plot_triangle(vertices, title, color='skyblue', figsize=(4, 4)):
-    """
-    绘制三角形并返回图像的base64编码
-    
-    参数:
-        vertices: 三角形的三个顶点坐标，形如 [(x1,y1), (x2,y2), (x3,y3)]
-        title: 图像标题
-        color: 三角形填充颜色
-        figsize: 图像大小
-    
-    返回:
-        图像的base64编码字符串
+    """绘制三角形并返回图像的 base64 编码。
+
+    Args:
+        vertices: 三角形三个顶点坐标，形如 [(x1, y1), (x2, y2), (x3, y3)]。
+        title: 图像标题。
+        color: 三角形填充颜色。
+        figsize: 图像大小。
+
+    Returns:
+        图像的 base64 编码字符串。
     """
     fig, ax = plt.subplots(figsize=figsize)
-    
-    # 创建三角形
+
+    # 创建三角形并绘制边
     triangle = Polygon(vertices, fill=True, color=color, alpha=0.6)
     ax.add_patch(triangle)
-    
-    # 绘制三角形边
     for i in range(3):
-        ax.plot([vertices[i][0], vertices[(i+1)%3][0]], 
-                [vertices[i][1], vertices[(i+1)%3][1]], 'k-', linewidth=2)
-    
-    # 添加顶点标签
+        ax.plot([vertices[i][0], vertices[(i + 1) % 3][0]],
+                [vertices[i][1], vertices[(i + 1) % 3][1]], 'k-', linewidth=2)
+
+    # 顶点标签
     for i, (x, y) in enumerate(vertices):
-        ax.text(x, y, f'P{i+1}', fontsize=12)
-    
-    # 设置坐标轴范围和标题
-    ax.set_xlim(min([v[0] for v in vertices]) - 0.5, max([v[0] for v in vertices]) + 0.5)
-    ax.set_ylim(min([v[1] for v in vertices]) - 0.5, max([v[1] for v in vertices]) + 0.5)
+        ax.text(x, y, f'P{i + 1}', fontsize=12)
+
+    # 坐标范围与标题
+    ax.set_xlim(min(v[0] for v in vertices) - 0.5, max(v[0] for v in vertices) + 0.5)
+    ax.set_ylim(min(v[1] for v in vertices) - 0.5, max(v[1] for v in vertices) + 0.5)
     ax.set_aspect('equal')
-    
-    # 尝试使用系统可用的字体设置标题
-    try:
-        from matplotlib.font_manager import FontProperties
-        # 尝试获取中文字体
-        font_prop = FontProperties(family='sans-serif')
-        ax.set_title(title, fontsize=14, pad=10, fontproperties=font_prop)
-    except:
-        # 如果失败，使用默认设置
-        ax.set_title(title, fontsize=14, pad=10)
-    
+    ax.set_title(title, fontsize=14, pad=10)
     ax.grid(True, linestyle='--', alpha=0.7)
-    
-    # 将图像转换为base64编码
+
+    # 导出为 base64，供 Streamlit 展示
     buf = io.BytesIO()
     plt.savefig(buf, format='png', bbox_inches='tight')
     plt.close(fig)
     buf.seek(0)
     img_str = base64.b64encode(buf.read()).decode('utf-8')
-    
     return img_str
 
 # 按角分类

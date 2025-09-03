@@ -6,28 +6,26 @@ import io
 import base64
 import matplotlib
 
-# 设置matplotlib支持中文显示
+# 设置matplotlib支持中文显示（仅在系统存在中文字体时才启用，避免findfont警告）
 try:
-    # 尝试使用系统可用的中文字体
     from matplotlib.font_manager import FontProperties
-    # 尝试多种可能的中文字体
     font_names = ['SimHei', 'Microsoft YaHei', 'SimSun', 'Arial Unicode MS', 'STSong']
     font = None
-    
+    # 逐个尝试常见中文字体；仅当findfont确认存在实际字体文件时才使用
     for font_name in font_names:
         try:
-            font = FontProperties(fname=matplotlib.font_manager.findfont(font_name))
+            path = matplotlib.font_manager.findfont(FontProperties(family=font_name), fallback_to_default=False)
+            font = FontProperties(fname=path)
             break
-        except:
+        except Exception:
             continue
-    
     if font is not None:
         matplotlib.rcParams['font.sans-serif'] = [font.get_name()]
     else:
-        # 如果找不到中文字体，使用系统默认字体
+        # 如果系统未安装常见中文字体，回退到默认无衬线字体，避免SimHei缺失警告
         matplotlib.rcParams['font.sans-serif'] = ['sans-serif']
-        
-    matplotlib.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+    # 正常显示负号
+    matplotlib.rcParams['axes.unicode_minus'] = False
 except Exception as e:
     st.warning(f"无法设置中文字体: {e}")
     # 使用默认字体
