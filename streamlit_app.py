@@ -8,8 +8,6 @@ st.set_page_config(
 
 st.title("几何问题")
 
-st.sidebar.success("请从上方选择一个页面。")
-
 st.markdown("""
 ## 欢迎来到几何问题学习平台！
 
